@@ -8,13 +8,18 @@ test.describe("History", () => {
       title: uniqueName("Release plan"),
       text: "Ship the beta in March.",
     });
-    await api(request, "documents.update", {
-      id: doc.id,
-      text: "Ship the beta in March.\n\nInvite the first customers in April.",
-    });
+
+    await page.goto(doc.url);
+    await page.getByText("Ship the beta in March.").click();
+    await page.keyboard.press("End");
+    await page.keyboard.press("Enter");
+    await page.keyboard.type("Invite the first customers in April.");
+    await expect
+      .poll(async () => (await api(request, "documents.info", { id: doc.id })).text)
+      .toContain("Invite the first customers in April.");
 
     await page.goto(`${doc.url}/history`);
-    const current = page.getByRole("link", { name: /Current version/ });
+    const current = page.getByRole("complementary").getByText("Current version");
     await expect(current).toBeVisible();
     await current.click();
 

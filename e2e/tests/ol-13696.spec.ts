@@ -9,8 +9,9 @@ async function signInAsNewMember(page: Page, request: APIRequestContext) {
   await api(request, "users.invite", { invites: [{ email, name: "Max Member", role: "member" }] });
 
   await page.goto("/");
-  await page.getByRole("textbox", { name: /email/i }).fill(email);
   await page.getByRole("button", { name: /Continue with Email/i }).click();
+  await page.getByRole("textbox").first().fill(email);
+  await page.keyboard.press("Enter");
 
   let body = "";
   await expect
