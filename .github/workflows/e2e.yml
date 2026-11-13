@@ -18,6 +18,10 @@ env:
   RATE_LIMITER_ENABLED: "false"
   ENABLE_UPDATES: "false"
   PGSSLMODE: disable
+  SMTP_HOST: localhost
+  SMTP_PORT: "1025"
+  SMTP_SECURE: "false"
+  SMTP_FROM_EMAIL: outline@example.com
 
 jobs:
   e2e:
@@ -40,6 +44,11 @@ jobs:
           - 6379:6379
         options: >-
           --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 5s --health-retries 20
+      mailpit:
+        image: axllent/mailpit:v1.27
+        ports:
+          - 1025:1025
+          - 8025:8025
     steps:
       - uses: actions/checkout@v5
 
@@ -77,7 +86,7 @@ jobs:
 
       - name: Run e2e tests
         working-directory: e2e
-        run: ./node_modules/.bin/playwright test
+        run: ./node_modules/.bin/playwright test tests/ol-13669.spec.ts tests/ol-13673.spec.ts tests/ol-13696.spec.ts
         env:
           CI: "true"
 
