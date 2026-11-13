@@ -32,7 +32,7 @@ async function signInAsNewMember(page: Page, request: APIRequestContext) {
     await page.getByRole("textbox").first().fill(code);
     await page.keyboard.press("Enter");
   }
-  await expect(page).toHaveURL(/\/home/, { timeout: 30_000 });
+  await expect(page.getByRole("link", { name: "Search" })).toBeVisible({ timeout: 30_000 });
 }
 
 test.describe("Import", () => {

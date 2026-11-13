@@ -20,6 +20,10 @@ test.describe("History", () => {
     await page.goto(`${doc.url}/history`);
     await page.getByRole("complementary").getByRole("link", { name: /edited/ }).first().click();
     await expect(page.locator(".ProseMirror").first()).toContainText("Enterprise costs 99 dollars.");
+    await page.waitForTimeout(3000);
+    console.log("DIAG url", page.url());
+    console.log("DIAG header", await page.locator("header").first().innerText());
+    console.log("DIAG marks", await page.locator(".ProseMirror").first().innerHTML().then((h) => h.slice(0, 1500)));
     await expect(page.getByText(/^\d+ changes$/)).toBeVisible();
 
     await page.getByRole("button", { name: "Next change" }).click();
