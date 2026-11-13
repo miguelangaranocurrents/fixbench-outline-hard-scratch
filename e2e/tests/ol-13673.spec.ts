@@ -13,12 +13,13 @@ test.describe("History", () => {
       text: "Starter costs 12 dollars.\n\nTeam costs 20 dollars.\n\nEnterprise costs 99 dollars.",
       done: true,
     });
-    let revisions: { id: string }[] = [];
     await expect
-      .poll(async () => (revisions = await api(request, "revisions.list", { documentId: doc.id })).length)
+      .poll(async () => (await api(request, "revisions.list", { documentId: doc.id })).length)
       .toBeGreaterThan(1);
 
-    await page.goto(`${doc.url}/history/${revisions[0].id}?changes`);
+    await page.goto(`${doc.url}/history`);
+    await page.getByRole("complementary").getByRole("link", { name: /edited/ }).first().click();
+    await expect(page.locator(".ProseMirror").first()).toContainText("Enterprise costs 99 dollars.");
     await expect(page.getByText(/^\d+ changes$/)).toBeVisible();
 
     await page.getByRole("button", { name: "Next change" }).click();
